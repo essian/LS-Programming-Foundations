@@ -62,7 +62,7 @@ loop do
   x = (1 + monthly_rate)**duration_months
   payment = amount.to_f * ((monthly_rate * x) / (x - 1))
 
-  prompt("Your payments would be $#{payment.round(2)} per month")
+  prompt("Your payments would be $#{'%.2f' % payment} per month")
 
   prompt("Would you like to do another calculation? (enter Y for yes)")
   answer = gets.chomp
