@@ -60,7 +60,6 @@ loop do
   monthly_rate = (apr.to_f / 100) / 12
 
   x = (1 + monthly_rate)**duration_months
-
   payment = amount.to_f * ((monthly_rate * x) / (x - 1))
 
   prompt("Your payments would be $#{payment.round(2)} per month")
