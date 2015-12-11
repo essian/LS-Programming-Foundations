@@ -1,0 +1,22 @@
+pseudocode
+
+1. Method that returns the sum of two integers
+
+given integers a and b
+add a to b
+end
+
+2. a method that takes an array of strings, and returns a string that is all those strings concatenated together
+
+given an array of strings
+set a variable to hold the result
+iterate through array adding each element to the result
+return the result
+
+3. given an array of integers
+initiate result array with no values
+iterate through the array
+  if array index %2 == 0
+    add element to result array
+  
+  return result
