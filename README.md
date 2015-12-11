@@ -2,4 +2,4 @@
 
 A repository containing exercises and solutions for the Launch School programming course.
 
-Stared on: 10th December 2015
+Started on: 10th December 2015
