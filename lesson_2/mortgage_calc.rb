@@ -21,10 +21,11 @@ def valid_duration?(duration)
   duration.to_i > 0
 end
 
+
 prompt("Welcome to the Mortgage Calculator!")
 
 loop do
-  amount, apr, duration = ''
+  amount, apr, duration = '', '', ''
 
   loop do
     prompt("What is the amount you wish to borrow?")
