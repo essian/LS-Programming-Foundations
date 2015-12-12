@@ -1,9 +1,25 @@
-VALID_CHOICES = [:r, :p, :s, :l, :v]
+VALID_CHOICES = %w( r p s l v)
 SIGN_NAMES = { r: 'rock', p: 'paper', s: 'scissors', l: 'lizard', v: 'spock' }
 
 def prompt(message)
   Kernel.puts("=> #{message}")
 end
+
+def letter_to_word(letter)
+  case letter
+    when 'r'
+      'rock'
+    when 'p'
+      'paper'
+    when 's'
+      'scissors'
+    when 'l'
+      'lizard'
+    when 'v'
+      'spock'
+  end
+end
+
 
 def win?(first, second)
   (first == 'rock' && (second == 'scissors' || second == 'lizard')) ||
@@ -31,15 +47,15 @@ def update_score(player, computer)
   end
 end
 
-def display_score(player, computer)
-  prompt("Player score is #{player}")
-  prompt("Computer score is #{computer}")
+def display_score(player_score, computer_score)
+  prompt("Player score is #{player_score}")
+  prompt("Computer score is #{computer_score}\n")
 end
 
 @player_score = 0
 @computer_score = 0
 
-operator_prompt = <<-MSG
+letter_prompt = <<-MSG
     Please enter a letter:
     r for rock
     p for paper
@@ -49,20 +65,20 @@ operator_prompt = <<-MSG
   MSG
 
 loop do
-  choice = ''
+  letter = ''
   loop do
-    prompt(operator_prompt)
-    choice = Kernel.gets().chomp().to_sym
+    prompt(letter_prompt)
+    letter = Kernel.gets().chomp()
 
-    if VALID_CHOICES.include?(choice)
+    if VALID_CHOICES.include?(letter)
       break
     else
       prompt("That's not a valid choice.")
     end
   end
 
-  choice = SIGN_NAMES[choice]
-  computer_choice = SIGN_NAMES.values.sample
+  choice = letter_to_word(letter)
+  computer_choice = letter_to_word(VALID_CHOICES.sample)
 
   prompt("You chose #{choice}; computer chose #{computer_choice}")
 
