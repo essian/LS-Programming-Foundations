@@ -7,19 +7,13 @@ end
 
 def letter_to_word(letter)
   case letter
-    when 'r'
-      'rock'
-    when 'p'
-      'paper'
-    when 's'
-      'scissors'
-    when 'l'
-      'lizard'
-    when 'v'
-      'spock'
+  when 'r' then 'rock'
+  when 'p' then 'paper'
+  when 's' then 'scissors'
+  when 'l' then 'lizard'
+  when 'v' then 'spock'
   end
 end
-
 
 def win?(first, second)
   (first == 'rock' && (second == 'scissors' || second == 'lizard')) ||
