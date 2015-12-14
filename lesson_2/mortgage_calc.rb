@@ -9,43 +9,31 @@ def prompt(message)
   puts "=> #{message}"
 end
 
-def valid_amount?(amount)
-  amount.to_f > 0
-end
-
-def valid_apr?(apr)
-  apr.to_f > 0
+def valid_number?(number)
+  number.to_f > 0
 end
 
 def valid_duration?(duration)
   duration.to_i > 0
 end
 
+def get_number(name)
+  number = gets.chomp
+  return number if valid_number?(number)
+  prompt("That's not a valid #{name}, please try again")
+  get_number(name)
+end
 
 prompt("Welcome to the Mortgage Calculator!")
 
 loop do
-  amount, apr, duration = '', '', ''
+  duration = '', '', ''
 
-  loop do
-    prompt("What is the amount you wish to borrow?")
-    amount = gets.chomp
-    if valid_amount?(amount)
-      break
-    else
-      prompt("That's not a valid amount, please try again")
-    end
-  end
+  prompt("What is the amount you wish to borrow?")
+  amount = get_number('amount')
 
-  loop do
-    prompt("What is the apr in percent? eg enter 5 for 5%")
-    apr = gets().chomp()
-    if valid_apr?(apr)
-      break
-    else
-      prompt("That's not a valid apr, please try again")
-    end
-  end
+  prompt("What is the apr in percent? eg enter 5 for 5%")
+  apr = get_number('apr')
 
   loop do
     prompt("What's the duration of the loan in years")
