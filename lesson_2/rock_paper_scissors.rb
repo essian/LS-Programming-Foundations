@@ -33,21 +33,24 @@ def display_results(player, computer)
   end
 end
 
-def update_score(player, computer)
+def update_score(player, computer, scores)
   if win?(player, computer)
-    @player_score += 1
+    # @player_score += 1
+    scores[:player] += 1
   elsif win?(computer, player)
-    @computer_score += 1
+     scores[:computer] += 1
   end
 end
 
-def display_score(player_score, computer_score)
-  prompt("Player score is #{player_score}")
-  prompt("Computer score is #{computer_score}\n")
+def display_score(scores)
+  prompt("Player score is #{scores[:player]}")
+  prompt("Computer score is #{scores[:computer]}\n")
 end
 
-@player_score = 0
-@computer_score = 0
+# @player_score = 0
+# @computer_score = 0
+
+scores = {player: 0, computer: 0}
 
 letter_prompt = <<-MSG
     Please enter a letter:
@@ -77,12 +80,12 @@ loop do
   prompt("You chose #{choice}; computer chose #{computer_choice}")
 
   display_results(choice, computer_choice)
-  update_score(choice, computer_choice)
-  display_score(@player_score, @computer_score)
-  if (@player_score >= 5)
+  update_score(choice, computer_choice, scores)
+  display_score(scores)
+  if (scores[:player] >= 5)
     prompt("End of the game. You're the champion!")
     break
-  elsif (@computer_score >= 5)
+  elsif (scores[:computer] >= 5)
     prompt("End of the game. You were defeated this time.")
     break
   end
