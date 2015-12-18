@@ -38,9 +38,9 @@ end
 
 # :tie, :dealer, :player, :dealer_busted, :player_busted
 def detect_result(dealer_total, player_total)
-  if player_total > 21
+  if player_total > 31
     :player_busted
-  elsif dealer_total > 21
+  elsif dealer_total > 31
     :dealer_busted
   elsif dealer_total < player_total
     :player
@@ -103,7 +103,7 @@ end
 scores = { player: 0, dealer: 0 }
 
 loop do
-  prompt "Welcome to Twenty-One!"
+  prompt "Welcome to Thirty-One!"
 
   # initialize vars
   deck = initialize_deck
@@ -156,7 +156,7 @@ loop do
   prompt "Dealer turn..."
 
   loop do
-    break if busted?(dealer_total) || dealer_total >= 17
+    break if busted?(dealer_total) || dealer_total >= 27
 
     prompt "Dealer hits!"
     dealer_cards << deck.pop
@@ -186,4 +186,4 @@ loop do
 end
 
 prompt "The champion is #{champion?(scores)}" if champion?(scores)
-prompt "Thank you for playing Twenty-One! Good bye!"
+prompt "Thank you for playing Thirty-One! Good bye!"
