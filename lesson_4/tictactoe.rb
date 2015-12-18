@@ -6,8 +6,8 @@ COMPUTER_MARKER = 'O'
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
                 [[1, 5, 9], [3, 5, 7]]
-FIRST_PLAYER = 'choose' # Valid options are choose, p for player or c for computer
-VALID_CHOICES = %w(p c)
+FIRST_PLAYER = 'p' # Valid options are choose, p for player or c for computer
+VALID_CHOICES = { player: "p", computer: "c" }
 
 def prompt(msg)
   puts "=> #{msg}"
@@ -48,18 +48,18 @@ def empty_squares(brd)
 end
 
 def place_piece!(board, current_player)
-  if current_player == VALID_CHOICES[1]
+  if current_player == VALID_CHOICES[:computer]
     computer_places_piece!(board)
-  elsif current_player == VALID_CHOICES[0]
+  elsif current_player == VALID_CHOICES[:player]
     player_places_piece!(board)
   end
 end
 
 def alternate_player(current_player)
-  if current_player == VALID_CHOICES[0]
-    current_player = VALID_CHOICES[1]
-  elsif current_player == VALID_CHOICES[1]
-    current_player = VALID_CHOICES[0]
+  if current_player == VALID_CHOICES[:player]
+    current_player = VALID_CHOICES[:computer]
+  elsif current_player == VALID_CHOICES[:computer]
+    current_player = VALID_CHOICES[:player]
   end
   current_player
 end
@@ -78,26 +78,25 @@ end
 def find_best_square(line, board, marker)
   if board.values_at(*line).count(marker) == 2
     board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
-    # else
-    # nil
   end
 end
 
-def computer_places_piece!(brd)
+def select_square(brd, marker)
   square = nil
-
-  # offense
   WINNING_LINES.each do |line|
-    square = find_best_square(line, brd, COMPUTER_MARKER)
+    square = find_best_square(line, brd, marker)
     break if square
   end
+  square
+end
+
+def computer_places_piece!(brd)
+  # offence
+  square = select_square(brd, COMPUTER_MARKER)
 
   # defence
   if !square
-    WINNING_LINES.each do |line|
-      square = find_best_square(line, brd, PLAYER_MARKER)
-      break if square
-    end
+    square = select_square(brd, PLAYER_MARKER)
   end
 
   # pick 5 or just pick a square
@@ -136,19 +135,24 @@ def update_score(scores, winner)
 end
 
 scores = { player: 0, computer: 0 }
+choice = ''
 
-loop do
-  board = initialize_board
-  if FIRST_PLAYER == 'choose'
+if FIRST_PLAYER == 'choose'
+  loop do
     prompt "Who starts? (Enter p for player or c for computer})"
     choice = gets.chomp.downcase
-    if VALID_CHOICES.include?(choice)
-      current_player = choice
+    if VALID_CHOICES.values.include?(choice)
+      break
     else
       prompt "That's not a valid choice. Please try again."
     end
-  else current_player = FIRST_PLAYER
   end
+  current_player = choice
+else current_player = FIRST_PLAYER
+end
+
+loop do
+  board = initialize_board
 
   loop do
     display_board(board)
