@@ -81,7 +81,7 @@ def find_best_square(line, board, marker)
   end
 end
 
-def select_square(brd, marker)
+def select_square_if_two_in_a_row(brd, marker)
   square = nil
   WINNING_LINES.each do |line|
     square = find_best_square(line, brd, marker)
@@ -92,11 +92,11 @@ end
 
 def computer_places_piece!(brd)
   # offence
-  square = select_square(brd, COMPUTER_MARKER)
+  square = select_square_if_two_in_a_row(brd, COMPUTER_MARKER)
 
   # defence
   if !square
-    square = select_square(brd, PLAYER_MARKER)
+    square = select_square_if_two_in_a_row(brd, PLAYER_MARKER)
   end
 
   # pick 5 or just pick a square
