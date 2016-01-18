@@ -20,7 +20,7 @@ end
 
 # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 def display_board(brd)
-  system 'clear'
+  system 'cls'
   puts "You're a #{PLAYER_MARKER}. Computer is a #{COMPUTER_MARKER}."
   puts ""
   puts "     |     |"
