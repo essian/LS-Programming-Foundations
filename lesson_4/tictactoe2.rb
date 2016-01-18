@@ -72,7 +72,7 @@ loop do
 	display_board(brd)
 
 	if detect_winner(brd) == 'Player'
-		puts "You are the winner"
+		puts "You are the winner!"
 		break
 	end
 	break if available_squares(brd).size == 0
