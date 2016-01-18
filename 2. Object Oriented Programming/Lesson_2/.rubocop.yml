@@ -62,8 +62,7 @@ Style/WordArray:
   WordRegex: !ruby/regexp /\A[\p{Word}]+\z/
 
 Metrics/AbcSize:
-  Description: A calculated magnitude based on number of assignments, branches, and
-    conditions.
+  Description: A calculated magnitude based on number of assignments, branches, and conditions.
   Enabled: true
   Max: 18
 
