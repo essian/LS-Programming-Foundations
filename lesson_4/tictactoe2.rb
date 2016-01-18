@@ -46,11 +46,24 @@ def detect_winner(board)
 	end
 end
 
-# def computer_select_square(board)
-# 	WINNING_LINES.each do |line|
-# 		if board.values_at(line).count(COMPUTER_MARKER) == 2
-# 			&&
-# 	end
+def computer_select_square(board)
+	square = ''
+	WINNING_LINES.each do |line|
+		if board.values_at(*line).count(COMPUTER_MARKER) == 2
+			square = board.select {|k, v| line.include?(k) && v == INITIAL_MARKER}.keys.first
+			break if square
+		elsif board.values_at(*line).count(PLAYER_MARKER) == 2
+			square = board.select {|k, v| line.include?(k) && v == INITIAL_MARKER}.keys.first
+			break if square
+  	elsif board[5] == INITIAL_MARKER
+		square = 5
+			break if square
+	  else
+		square = available_squares(board).sample
+	end
+	end
+	square
+end
 
 
 
