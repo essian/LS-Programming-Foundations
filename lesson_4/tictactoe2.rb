@@ -28,8 +28,8 @@ def display_board(board)
 	puts "   |   |   "
 end
 
-def update_board_move(board, player_choice, marker)
-	board[player_choice] = marker
+def update_board_move(board, square, marker)
+	board[square] = marker
 end
 
 def available_squares(board)
@@ -87,17 +87,21 @@ loop do
 	if detect_winner(brd) == 'Player'
 		puts "You are the winner!"
 		break
+	elsif available_squares(brd).size == 0
+		puts "It's a tie!"
+		break
 	end
-	break if available_squares(brd).size == 0
-
+	
 	computer_choice = computer_select_square(brd)
 	update_board_move(brd, computer_choice, COMPUTER_MARKER)
 	display_board(brd)
 	if detect_winner(brd) == 'Computer'
 		puts "You lose"
 		break
+	elsif available_squares(brd).size == 0
+		puts "It's a tie!"
+		break
 	end
 	
-	break if available_squares(brd).size == 0
 end
 
