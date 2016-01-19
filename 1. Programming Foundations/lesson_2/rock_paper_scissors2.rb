@@ -35,7 +35,7 @@ while play_again
 
 	winner = calculate_result(player_choice, computer_choice)
 	prompt "#{winner} wins"
-	prompt "Would you like to play again?"
+	prompt "Would you like to play again now?"
 	play_again = false if gets.chomp.downcase == 'n'
 end
 
