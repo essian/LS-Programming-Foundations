@@ -1,5 +1,5 @@
-# Launch-School-Programming-Foundations
+# LS-Programming-Foundations
 
-A repository containing exercises and solutions for the Launch School programming course.
+A repository containing exercises and solutions.
 
 Started on: 10th December 2015
