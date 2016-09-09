@@ -1,0 +1,5 @@
+welcome: "Welcome to the mortgate calculator"
+get_loan_amount: "What amount are you planning to borrow?"
+get_interest_rate: "What is the interest rate in percent (enter 5 for 5%)"
+get_duration: "How long should the mortgage last in years"
+invalid_input: "You must enter a valid value"

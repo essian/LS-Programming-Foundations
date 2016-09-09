@@ -4,6 +4,7 @@
 # output the result
 
 require 'yaml'
+require 'pry'
 MESSAGES = YAML.load_file('calculator_messages.yml')
 
 def prompt(message)
@@ -11,7 +12,7 @@ def prompt(message)
 end
 
 def valid_number?(number)
-  number.to_i.is_a?(Numeric) && number.to_i != 0
+  number.to_i.is_a?(Numeric) && number.nonzero?
 end
 
 def operation_to_message(op)
@@ -29,7 +30,6 @@ end
 
 loop do
   number1, number2 = ''
-
   prompt(MESSAGES['welcome'])
   name = ''
 
