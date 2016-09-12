@@ -16,3 +16,9 @@ loop do
   end
 end
 computer_choice = VALID_CHOICES.sample
+
+puts "You chose #{choice}, computer chose #{computer_choice}"
+
+if (choice == 'rock' && computer == 'scissors') ||
+  prompt("You won!")
+elsif choice
