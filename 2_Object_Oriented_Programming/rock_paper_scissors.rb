@@ -35,9 +35,10 @@ class Move
 end
 
 class Player
-  attr_accessor :move, :name
+  attr_accessor :move, :name, :score
   def initialize
     set_name
+    @score = 0
   end
 end
 
@@ -77,6 +78,7 @@ end
 
 # Game Orchestration Engine
 class RPSGame
+  FIRST_TO = 2
   attr_accessor :human, :computer
 
   def initialize
@@ -100,8 +102,10 @@ class RPSGame
   def display_winner
     if human.move > computer.move
       puts "#{human.name} won!"
+      human.score += 1
     elsif human.move < computer.move
       puts "#{computer.name} won!"
+      computer.score += 1
     else
       puts "It's a tie!"
     end
@@ -115,7 +119,21 @@ class RPSGame
       break if ['y', 'n'].include? answer.downcase
       puts "You must enter y or n"
     end
-    answer.casecmp('y') >-1
+    answer.casecmp('y') > -1
+  end
+
+  def display_scores
+    puts "#{human.name}: #{human.score}, #{computer.name}: #{computer.score}"
+  end
+
+  def champion?
+    human.score >= FIRST_TO || computer.score >= FIRST_TO
+  end
+
+  def display_champion
+    champion = human.score >= FIRST_TO ? human : computer
+    puts "#{champion.name} is the first to score #{FIRST_TO}."
+    puts "#{champion.name} is the champion."
   end
 
   def play
@@ -125,6 +143,11 @@ class RPSGame
       computer.choose
       display_moves
       display_winner
+      display_scores
+      if champion?
+        display_champion
+        break
+      end
       break unless play_again?
     end
     display_goodbye_message
