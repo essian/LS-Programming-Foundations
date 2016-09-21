@@ -1,13 +1,13 @@
 require 'pry'
 
-INITIAL_MARKER = ' '
-PLAYER_MARKER = 'X'
-COMPUTER_MARKER = 'O'
+INITIAL_MARKER = ' '.freeze
+PLAYER_MARKER = 'X'.freeze
+COMPUTER_MARKER = 'O'.freeze
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
                 [[1, 5, 9], [3, 5, 7]]
-FIRST_PLAYER = 'p' # Valid options are choose, p for player or c for computer
-VALID_CHOICES = { player: "p", computer: "c" }
+FIRST_PLAYER = 'p'.freeze
+VALID_CHOICES = { player: "p", computer: "c" }.freeze
 
 def prompt(msg)
   puts "=> #{msg}"
@@ -35,7 +35,7 @@ def display_board(brd)
   puts "  #{brd[7]}  |  #{brd[8]}  |  #{brd[9]}"
   puts "     |     |"
 end
-# rubocop:enamble Metrics/MethodLength, Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
 def initialize_board
   new_board = {}
@@ -67,7 +67,8 @@ end
 def player_places_piece!(brd)
   square = ''
   loop do
-    prompt "Choose a position to place a piece: #{joinor(empty_squares(brd), ',')}"
+    prompt "Choose a position to place a piece:
+     #{joinor(empty_squares(brd), ',')}"
     square = gets.chomp.to_i
     break if empty_squares(brd).include?(square)
     prompt "Sorry, that's not a valid choice."
@@ -171,7 +172,8 @@ loop do
     prompt "It's a tie!"
   end
 
-  prompt "Player score is #{scores[:player]} and computer score is #{scores[:computer]}"
+  prompt "Player score is #{scores[:player]}
+   and computer score is #{scores[:computer]}"
   break if scores[:player] == 5 || scores[:computer] == 5
   prompt("Play again? (y or n)")
   answer = gets.chomp

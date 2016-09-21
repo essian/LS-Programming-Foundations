@@ -1,3 +1,6 @@
+AllCops:
+  TargetRubyVersion: 2.3
+
 Style/BlockComments:
   Description: 'Do not use block comments.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#no-block-comments'
@@ -66,8 +69,7 @@ Style/WordArray:
   WordRegex: !ruby/regexp /\A[\p{Word}]+\z/
 
 Metrics/AbcSize:
-  Description: A calculated magnitude based on number of assignments, branches, and
-    conditions.
+  Description: A calculated magnitude based on number of assignments, branches, and conditions.
   Enabled: true
   Max: 18
 
