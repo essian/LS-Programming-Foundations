@@ -53,18 +53,76 @@ end
 
 class Computer < Player
   def set_name
-    self.name = %w(jilly john jerry).sample
+    self.name = %w(R2D2 Hal Number5 Tik-Tok).sample
   end
 
-  def choose
+  def choose(opponent_log)
+    max = opponent_log.values.max
+    top_moves = opponent_log.select { |_, v| v == max }.keys
+    to_beat = top_moves.sample
+    beating_combos = RPSGame::WINNERS.select { |_, v| v.include?(to_beat) }
+    self.move = Move.new(beating_combos.keys.sample)
+    log[move.value] += 1
+  end
+end
+
+class R2D2 < Computer
+  def set_name
+    self.name = "R2D2"
+  end
+
+  def choose(_)
+    self.move = Move.new('rock')
+    log[move.value] += 1
+  end
+end
+
+class Hal < Computer
+  def set_name
+    self.name = "Hal"
+  end
+
+  def choose(_)
     self.move = Move.new(Move::VALUES.sample)
+    log[move.value] += 1
+  end
+end
+
+class Number5 < Computer
+  def set_name
+    self.name = "Number5"
+  end
+
+  def choose(_)
+    n = rand
+    self.move = case n
+                when 0..0.8
+                  Move.new(Move::VALUES.first)
+                else
+                  Move.new(Move::VALUES.sample)
+                end
+    log[move.value] += 1
+  end
+end
+
+class TikTok < Computer
+  def set_name
+    self.name = "Tik-Tok"
+  end
+
+  def choose(opponent_log)
+    max = opponent_log.values.max
+    top_moves = opponent_log.select { |_, v| v == max }.keys
+    to_beat = top_moves.sample
+    beating_combos = RPSGame::WINNERS.select { |_, v| v.include?(to_beat) }
+    self.move = Move.new(beating_combos.keys.sample)
     log[move.value] += 1
   end
 end
 
 # Game Orchestration Engine
 class RPSGame
-  FIRST_TO = 2
+  FIRST_TO = 5
 
   WINNERS = {
     'rock' => ['scissors', 'lizard'],
@@ -77,7 +135,8 @@ class RPSGame
 
   def initialize
     @human = Human.new
-    @computer = Computer.new
+    @computer = Number5.new
+    # @computer = [R2D2.new, TikTok.new, Number5.new, Hal.new].sample
   end
 
   def display_welcome_message
@@ -86,7 +145,7 @@ class RPSGame
   end
 
   def display_goodbye_message
-    puts "Thanks for playing"
+    puts "\nThanks for playing"
   end
 
   def display_moves
@@ -94,13 +153,20 @@ class RPSGame
     puts "#{computer.name} chose #{computer.move}"
   end
 
+  def winner(player)
+    @winner = player.name
+    player.score += 1
+  end
+
+  def player_won?(player1, player2)
+    WINNERS[player1.move.value].include?(player2.move.value)
+  end
+
   def scoring
-    if WINNERS[human.move.value].include?(computer.move.value)
-      @winner = human.name
-      human.score += 1
-    elsif WINNERS[computer.move.value].include?(human.move.value)
-      @winner = computer.name
-      computer.score += 1
+    if player_won?(human, computer)
+      winner(human)
+    elsif player_won?(computer, human)
+      winner(computer)
     else
       @winner = "No one"
     end
@@ -133,12 +199,12 @@ class RPSGame
 
   def display_champion
     champion = human.score >= FIRST_TO ? human : computer
-    puts "#{champion.name} is the first to score #{FIRST_TO}."
+    puts "\n#{champion.name} is the first to score #{FIRST_TO}."
     puts "#{champion.name} is the champion."
   end
 
   def display_log(log)
-    log.each {|move, count| puts "#{move}: #{count}"}
+    log.each { |move, count| puts "#{move}: #{count}" }
   end
 
   def display_logs
@@ -150,17 +216,21 @@ class RPSGame
     display_log(computer.log)
   end
 
+  def display_result
+    display_moves
+    display_winner
+    display_scores
+    display_logs
+  end
+
   def play
     display_welcome_message
     loop do
       system 'clear'
       human.choose
-      computer.choose
-      display_moves
+      computer.choose(human.log)
       scoring
-      display_winner
-      display_scores
-      display_logs
+      display_result
       if champion?
         display_champion
         break
