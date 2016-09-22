@@ -28,21 +28,21 @@ end
 
 class Human < Player
   def set_name
-    n = nil
+    users_name = nil
     loop do
       puts "What's your name?"
-      n = gets.chomp
-      break unless n.empty?
+      users_name = gets.chomp.strip
+      break unless users_name.empty?
       puts "You must enter a value. What's your name?"
     end
-    self.name = n.capitalize
+    self.name = users_name.capitalize
   end
 
   def choose
     choice = nil
     loop do
       puts "Please choose from #{Move::VALUES.join(', ')}: "
-      choice = gets.chomp
+      choice = gets.chomp.downcase
       break if Move::VALUES.include?(choice)
       puts "Sorry invalid choice"
     end
@@ -94,9 +94,9 @@ class Number5 < Computer
   end
 
   def choose(_)
-    n = rand
-    self.move = case n
-                when 0..0.8
+    weighting = rand
+    self.move = case weighting
+                when 0..0.7
                   Move.new(Move::VALUES.first)
                 else
                   Move.new(Move::VALUES.sample)
@@ -135,8 +135,8 @@ class RPSGame
 
   def initialize
     @human = Human.new
-    @computer = Number5.new
-    # @computer = [R2D2.new, TikTok.new, Number5.new, Hal.new].sample
+    # @computer = Number5.new
+    @computer = [R2D2.new, TikTok.new, Number5.new, Hal.new].sample
   end
 
   def display_welcome_message
