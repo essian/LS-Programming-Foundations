@@ -1,22 +1,14 @@
-# module Swim
-#   def enable_swimming
-#     @can_swim = true
-#   end
-# end
+def sum_square_difference(num)
+  square_sum = (1..num).to_a.inject(:+) ** 2
 
-# class Dog
-#   # include Swim
+  sum_square = (1..num).to_a.inject {|sum, num| sum + num**2}
 
-#   def swim
-#     "swimming!" if @can_swim
-#   end
-# end
+  square_sum - sum_square
 
-# d = Dog.new
-# p d.swim
-
-class A
 
 end
 
-puts A.inspect
+p sum_square_difference(3) == 22
+p sum_square_difference(10) == 2640
+p sum_square_difference(1) == 0
+p sum_square_difference(100) == 25164150

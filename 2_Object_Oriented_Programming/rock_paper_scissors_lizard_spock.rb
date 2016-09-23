@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pry'
 
 class Move
@@ -135,8 +137,7 @@ class RPSGame
 
   def initialize
     @human = Human.new
-    # @computer = Number5.new
-    @computer = [R2D2.new, TikTok.new, Number5.new, Hal.new].sample
+    @computer = [R2D2, TikTok, Number5, Hal].sample.new
   end
 
   def display_welcome_message
