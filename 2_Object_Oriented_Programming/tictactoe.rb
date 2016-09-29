@@ -63,10 +63,10 @@ class Board
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
       next unless squares.map(&:marker).sort == [
-                                                  initial_marker,
-                                                  marker,
-                                                  marker
-                                                ]
+        initial_marker,
+        marker,
+        marker
+      ]
       square = line.find { |index| @squares[index].marker == initial_marker }
     end
     square
@@ -103,46 +103,77 @@ class Square
 end
 
 class Player
-  attr_reader :marker
-  attr_accessor :score
+  attr_accessor :score, :marker, :name
 
   def initialize(marker)
     @marker = marker
     @score = 0
+    @name = nil
+  end
+end
+
+class Human < Player
+  def set_name
+    answer = nil
+    loop do
+      puts "What is your name?"
+      answer = gets.chomp
+      break unless answer.strip.empty? || answer.size > 30
+      puts "Name cannot be blank or very long"
+    end
+    self.name = answer
+  end
+
+  def set_marker
+    new_marker = nil
+    loop do
+      puts "What marker would you like to use?"
+      new_marker = gets.chomp.strip
+      break unless new_marker == '' || new_marker.size > 1
+      puts "Your marker must be visible, and may only be one character"
+    end
+    self.marker = new_marker
+  end
+end
+
+class Computer < Player
+  def set_name
+    self.name = %w(Kurt Florence Christine).sample
+  end
+
+  def update_marker(human_marker)
+    self.marker = name[0]
+    self.marker = [A..Z].sample while human_marker == marker
   end
 end
 
 class TTTGame
   HUMAN_MARKER = 'X'.freeze
   COMPUTER_MARKER = 'O'.freeze
-  FIRST_TO_MOVE = HUMAN_MARKER
+  # FIRST_TO_MOVE = HUMAN_MARKER
   MAX_SCORE = 3
 
   attr_reader :board, :human, :computer
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
-    @current_marker = FIRST_TO_MOVE
+    @human = Human.new(HUMAN_MARKER)
+    @computer = Computer.new(COMPUTER_MARKER)
+    @current_marker = [human.marker, computer.marker].sample
   end
 
   def play
-    clear
-    display_welcome_message
-
+    welcome_user
     loop do
       display_board
-
       loop do
         current_player_moves
         break if board.someone_won? || board.full?
         display_board_and_clear_screen
       end
-      update_score if board.someone_won?
+      update_score # if board.someone_won?
       display_result
-      break if round_over?
-      break unless play_again?
+      break if round_over? || not_playing_again?
       reset
       display_play_again_message
     end
@@ -151,14 +182,45 @@ class TTTGame
 
   private
 
+  def choose_own_marker?
+    set_marker = nil
+    puts "Would you like to choose your own marker (y/n)?"
+    loop do
+      set_marker = gets.chomp
+      break if ['y', 'n'].include?(set_marker.downcase)
+      puts "You must enter y or n"
+    end
+    set_marker.casecmp('y') >= 0
+  end
+
+  def welcome_user
+    clear
+    display_welcome_message
+    set_names
+    set_markers
+    clear
+  end
+
+  def set_names
+    human.set_name
+    computer.set_name
+  end
+
+  def set_markers
+    if choose_own_marker?
+      human.set_marker
+      computer.update_marker(human.marker)
+    end
+  end
+
   def round_over?
     human.score >= MAX_SCORE || computer.score >= MAX_SCORE
   end
 
   def update_score
-    if board.winning_marker == HUMAN_MARKER
+    if board.winning_marker == human.marker
       human.score += 1
-    elsif board.winning_marker == COMPUTER_MARKER
+    elsif board.winning_marker == computer.marker
       computer.score += 1
     end
   end
@@ -184,8 +246,8 @@ class TTTGame
   end
 
   def computer_moves
-    move = board.third_in_the_row(COMPUTER_MARKER) ||
-           board.third_in_the_row(HUMAN_MARKER) ||
+    move = board.third_in_the_row(computer.marker) ||
+           board.third_in_the_row(human.marker) ||
            five_if_available ||
            board.unmarked_keys.sample
     board[move] = computer.marker
@@ -228,7 +290,8 @@ class TTTGame
   end
 
   def display_board
-    puts "You're a #{human.marker}, computer is a #{computer.marker}."
+    puts "#{human.name} is a #{human.marker}"
+    puts "#{computer.name} is a #{computer.marker}"
     puts ""
     board.draw
     puts ""
@@ -244,9 +307,9 @@ class TTTGame
 
     case board.winning_marker
     when human.marker
-      puts "You won this round!"
+      puts "#{human.name} won this round!"
     when computer.marker
-      puts "Computer won this round!"
+      puts "#{computer.name} won this round!"
     else
       puts "It's a tie!"
     end
@@ -256,12 +319,12 @@ class TTTGame
   def display_scores
     puts ""
     puts "*** Scores ***"
-    puts "#{'You:'.ljust(10)} #{human.score}"
-    puts "#{'Computer:'.ljust(10)} #{computer.score}"
+    puts "#{human.name.ljust(35, '-')} #{human.score}"
+    puts "#{computer.name.ljust(35, '-')} #{computer.score}"
     puts ""
   end
 
-  def play_again?
+  def not_playing_again?
     answer = nil
     loop do
       puts "Would you like to play again (y/n)"
@@ -269,12 +332,11 @@ class TTTGame
       break if %w(y n).include? answer
       puts "Sorry, must be y or n"
     end
-    answer == 'y'
+    answer == 'n'
   end
 
   def reset
     board.reset
-    @current_marker = FIRST_TO_MOVE
     clear
   end
 
