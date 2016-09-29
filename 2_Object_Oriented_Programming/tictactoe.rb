@@ -171,7 +171,7 @@ class TTTGame
         break if board.someone_won? || board.full?
         display_board_and_clear_screen
       end
-      update_score # if board.someone_won?
+      update_score
       display_result
       break if round_over? || not_playing_again?
       reset
