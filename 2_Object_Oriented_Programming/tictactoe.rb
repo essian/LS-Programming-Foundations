@@ -57,6 +57,21 @@ class Board
     (1..9).each { |key| @squares[key] = Square.new }
   end
 
+  def third_in_the_row(marker)
+    initial_marker = Square::INITIAL_MARKER
+    square = nil
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      next unless squares.map(&:marker).sort == [
+                                                  initial_marker,
+                                                  marker,
+                                                  marker
+                                                ]
+      square = line.find { |index| @squares[index].marker == initial_marker }
+    end
+    square
+  end
+
   private
 
   def three_identical_markers?(squares)
@@ -153,6 +168,10 @@ class TTTGame
     arr.size == 2 ? arr.join(' ') : arr.join(delimiter)
   end
 
+  def five_if_available
+    board.unmarked_keys.include?(5) ? 5 : false
+  end
+
   def human_moves
     puts "Choose a square (#{joinor(board.unmarked_keys)}): "
     square = nil
@@ -165,7 +184,11 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker
+    move = board.third_in_the_row(COMPUTER_MARKER) ||
+           board.third_in_the_row(HUMAN_MARKER) ||
+           five_if_available ||
+           board.unmarked_keys.sample
+    board[move] = computer.marker
   end
 
   def current_player_moves
