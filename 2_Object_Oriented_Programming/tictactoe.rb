@@ -136,6 +136,22 @@ class Human < Player
     end
     self.marker = new_marker
   end
+
+  def joinor(arr, delimiter=', ', word='or')
+    arr[-1] = "#{word} #{arr.last}" if arr.size > 1
+    arr.size == 2 ? arr.join(' ') : arr.join(delimiter)
+  end
+
+  def move(board)
+    puts "Choose a square (#{joinor(board.unmarked_keys)}): "
+    square = nil
+    loop do
+      square = gets.chomp.to_i
+      break if board.unmarked_keys.include?(square)
+      puts "Sorry, that's not a valid choice"
+    end
+    board[square] = marker
+  end
 end
 
 class Computer < Player
@@ -147,12 +163,97 @@ class Computer < Player
     self.marker = name[0]
     self.marker = [*'A'..'Z'].sample while human_marker == marker
   end
+
+  def five_if_available(board)
+    board.unmarked_keys.include?(5) ? 5 : false
+  end
+
+  def attacking_move(board)
+    board.third_in_the_row(marker)
+  end
+
+  def defending_move(board, human_marker)
+    board.third_in_the_row(human_marker)
+  end
+
+  def move(board, human_marker)
+    move = attacking_move(board) ||
+           defending_move(board, human_marker) ||
+           five_if_available(board) ||
+           board.unmarked_keys.sample
+    board[move] = marker
+  end
+end
+
+module Display
+  def display_welcome_message
+    puts "Welcome to Tic Tac Toe!"
+    puts ""
+  end
+
+  def display_winner(max_score)
+    if human.score >= max_score
+      puts "You won!"
+    elsif computer.score >= max_score
+      puts "You lose..."
+    end
+  end
+
+  def display_board(human, computer, board)
+    puts "#{human.name} is a #{human.marker}"
+    puts "#{computer.name} is a #{computer.marker}"
+    puts ""
+    board.draw
+    puts ""
+  end
+
+  def display_board_and_clear_screen(human, computer, board)
+    clear
+    display_board(human, computer, board)
+  end
+
+  def display_result(human, computer)
+    display_board_and_clear_screen(human, computer, board)
+
+    case board.winning_marker
+    when human.marker
+      puts "#{human.name} won this round!"
+    when computer.marker
+      puts "#{computer.name} won this round!"
+    else
+      puts "It's a tie!"
+    end
+    display_scores(human, computer)
+  end
+
+  def display_goodbye_message(max_score)
+    display_winner(max_score)
+    puts "Thanks for playing Tic Tac Toe! Goodbye!"
+  end
+
+  def display_play_again_message
+    puts "Let's play again!"
+    puts ""
+  end
+
+  def display_scores(human, computer)
+    puts ""
+    puts "*** Scores ***"
+    puts "#{human.name.ljust(35, '-')} #{human.score}"
+    puts "#{computer.name.ljust(35, '-')} #{computer.score}"
+    puts ""
+  end
+
+  def clear
+    Gem.win_platform? ? (system "cls") : (system "clear")
+  end
 end
 
 class TTTGame
+  include Display
+
   HUMAN_MARKER = 'X'.freeze
   COMPUTER_MARKER = 'O'.freeze
-  # FIRST_TO_MOVE = HUMAN_MARKER
   MAX_SCORE = 3
 
   attr_reader :board, :human, :computer
@@ -167,22 +268,26 @@ class TTTGame
   def play
     welcome_user
     loop do
-      display_board
-      loop do
-        current_player_moves
-        break if board.someone_won? || board.full?
-        display_board_and_clear_screen
-      end
+      display_board(human, computer, board)
+      make_moves
       update_score
-      display_result
+      display_result(human, computer)
       break if round_over? || not_playing_again?
       reset
       display_play_again_message
     end
-    display_goodbye_message
+    display_goodbye_message(MAX_SCORE)
   end
 
   private
+
+  def make_moves
+    loop do
+      current_player_moves
+      break if board.someone_won? || board.full?
+      display_board_and_clear_screen(human, computer, board)
+    end
+  end
 
   def choose_own_marker?
     set_marker = nil
@@ -227,111 +332,18 @@ class TTTGame
     end
   end
 
-  def joinor(arr, delimiter=', ', word='or')
-    arr[-1] = "#{word} #{arr.last}" if arr.size > 1
-    arr.size == 2 ? arr.join(' ') : arr.join(delimiter)
-  end
-
-  def five_if_available
-    board.unmarked_keys.include?(5) ? 5 : false
-  end
-
-  def human_moves
-    puts "Choose a square (#{joinor(board.unmarked_keys)}): "
-    square = nil
-    loop do
-      square = gets.chomp.to_i
-      break if board.unmarked_keys.include?(square)
-      puts "Sorry, that's not a valid choice"
-    end
-    board[square] = human.marker
-  end
-
-  def attacking_move
-    board.third_in_the_row(computer.marker)
-  end
-
-  def defending_move
-    board.third_in_the_row(human.marker)
-  end
-
-  def computer_moves
-    move = attacking_move ||
-           defending_move ||
-           five_if_available ||
-           board.unmarked_keys.sample
-    board[move] = computer.marker
-  end
-
   def current_player_moves
     if human_turn?
-      human_moves
-      @current_marker = COMPUTER_MARKER
+      human.move(board)
+      @current_marker = computer.marker
     else
-      computer_moves
-      @current_marker = HUMAN_MARKER
+      computer.move(board, human.marker)
+      @current_marker = human.marker
     end
   end
 
   def human_turn?
-    @current_marker == HUMAN_MARKER
-  end
-
-  def display_welcome_message
-    puts "Welcome to Tic Tac Toe!"
-    puts ""
-  end
-
-  def display_winner
-    if human.score >= MAX_SCORE
-      puts "You won!"
-    elsif computer.score >= MAX_SCORE
-      puts "You lose..."
-    end
-  end
-
-  def display_goodbye_message
-    display_winner
-    puts "Thanks for playing Tic Tac Toe! Goodbye!"
-  end
-
-  def clear
-    system 'clear' || system 'cls'
-  end
-
-  def display_board
-    puts "#{human.name} is a #{human.marker}"
-    puts "#{computer.name} is a #{computer.marker}"
-    puts ""
-    board.draw
-    puts ""
-  end
-
-  def display_board_and_clear_screen
-    clear
-    display_board
-  end
-
-  def display_result
-    display_board_and_clear_screen
-
-    case board.winning_marker
-    when human.marker
-      puts "#{human.name} won this round!"
-    when computer.marker
-      puts "#{computer.name} won this round!"
-    else
-      puts "It's a tie!"
-    end
-    display_scores
-  end
-
-  def display_scores
-    puts ""
-    puts "*** Scores ***"
-    puts "#{human.name.ljust(35, '-')} #{human.score}"
-    puts "#{computer.name.ljust(35, '-')} #{computer.score}"
-    puts ""
+    @current_marker == human.marker
   end
 
   def not_playing_again?
@@ -348,11 +360,6 @@ class TTTGame
   def reset
     board.reset
     clear
-  end
-
-  def display_play_again_message
-    puts "Let's play again!"
-    puts ""
   end
 end
 
