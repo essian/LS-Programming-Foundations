@@ -145,7 +145,7 @@ class Computer < Player
 
   def update_marker(human_marker)
     self.marker = name[0]
-    self.marker = [A..Z].sample while human_marker == marker
+    self.marker = [*'A'..'Z'].sample while human_marker == marker
   end
 end
 
@@ -247,9 +247,17 @@ class TTTGame
     board[square] = human.marker
   end
 
+  def attacking_move
+    board.third_in_the_row(computer.marker)
+  end
+
+  def defending_move
+    board.third_in_the_row(human.marker)
+  end
+
   def computer_moves
-    move = board.third_in_the_row(computer.marker) ||
-           board.third_in_the_row(human.marker) ||
+    move = attacking_move ||
+           defending_move ||
            five_if_available ||
            board.unmarked_keys.sample
     board[move] = computer.marker
@@ -288,7 +296,7 @@ class TTTGame
   end
 
   def clear
-    system 'clear'
+    system 'clear' || system 'cls'
   end
 
   def display_board
