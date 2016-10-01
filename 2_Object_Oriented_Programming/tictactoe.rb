@@ -245,7 +245,7 @@ module Display
   end
 
   def clear
-    Gem.win_platform? ? (system "cls") : (system "clear")
+    system('clear') || system('cls')
   end
 end
 
