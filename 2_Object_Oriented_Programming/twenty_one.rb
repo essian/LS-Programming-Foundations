@@ -4,11 +4,23 @@ require 'pry'
 
 module Display
   def welcome
+    clear
     puts "Welcome to twenty one!"
   end
 
   def clear
     system('clear') || system('cls')
+  end
+
+  def press_a_key
+    puts "Hit enter to continue..."
+    gets
+  end
+
+  def show_dealing
+    sleep 1
+    puts '...dealing'
+    sleep 1
   end
 
   def show_cards(participant)
@@ -27,25 +39,46 @@ module Display
     puts
   end
 
+  def show_player_turn_cards(player, dealer)
+    clear
+    show_one_card(dealer)
+    show_cards(player)
+  end
+
+  def show_dealer_turn_cards(dealer)
+    clear
+    puts "Now it's #{dealer.name}'s turn..."
+    puts
+    show_cards(dealer)
+  end
+
   def show_winner(winner)
-    puts "#{winner.name} won"
+    puts "*** #{winner.name} won ***"
   end
 
   def show_busted(name)
-    puts "\n#{name} busted"
+    puts "\n#{name} busted."
+    puts
+  end
+
+  def show_scores(player, dealer)
+    puts "Scores:"
+    puts "-------"
+    puts "#{player.name}: #{player.total}"
+    puts "#{dealer.name}: #{dealer.total}"
     puts
   end
 
   def show_tie
-    puts "It's a tie"
+    puts "It's a tie!"
   end
 
   def show_play_again_message
-    puts "Do you want to play again?"
+    puts "\nDo you want to play again?"
   end
 
   def goodbye
-    puts "Thanks for playing"
+    puts "Cool, thanks for playing!"
   end
 end
 
@@ -103,15 +136,15 @@ class Player < Participant
       break unless answer.strip.empty?
       puts "Please enter your name."
     end
-    self.name = answer
+    self.name = answer.capitalize
   end
 
-  def play(deck)
+  def play(deck, dealer)
     loop do
       puts "Do you want to hit or stay? (h/s)"
       break if response.start_with? 's'
       hit(deck)
-      show_cards(self)
+      show_player_turn_cards(self, dealer)
       next unless busted?
       show_busted(name)
       break
@@ -133,24 +166,17 @@ end
 
 class Dealer < Participant
   def play(deck)
-    display_start_of_turn_message
+    press_a_key
+    show_dealer_turn_cards(self)
     loop do
       break if total > 17
-      sleep 1
-      puts '...dealing'
-      sleep 1
-      clear
+      show_dealing
       hit(deck)
-      show_cards(self)
+      show_dealer_turn_cards(self)
       puts ""
     end
-  end
-
-  private
-
-  def display_start_of_turn_message
-    puts "Now it's the dealer turn..."
-    show_cards(self)
+    puts "Dealer is done."
+    press_a_key
   end
 end
 
@@ -199,7 +225,7 @@ class Game
   def reset
     player.hand = []
     dealer.hand = []
-    self.deck = Deck.new
+    self.deck = Deck.new # Perhaps each round shouldn't have a new deck?
   end
 
   def deal_cards
@@ -215,7 +241,7 @@ class Game
   end
 
   def player_turn
-    player.play(deck)
+    player.play(deck, dealer)
   end
 
   def dealer_turn
@@ -245,32 +271,39 @@ class Game
     player.total == dealer.total
   end
 
-  def highest_scorer
-    return player if player.total > dealer.total
-    return dealer if dealer.total > player.total
+  def busted_player
+    player.busted? ? player : dealer
+  end
+
+  def player_with_closest_total
+    21 - player.total < 21 - dealer.total ? player : dealer
+  end
+
+  def unbusted
+    player.busted? ? dealer : player
   end
 
   def busted_results
     if both_busted?
       puts "Both players busted"
       show_tie
-    elsif player.busted?
-      show_busted(player.name)
-      show_winner(dealer)
     else
-      show_busted(dealer.name)
-      show_winner(player)
+      show_busted(busted_player.name)
+      show_winner(unbusted)
     end
   end
 
   def show_result
-    puts "You scored #{player.total}, dealer scored #{dealer.total}"
+    clear
+    show_cards(player)
+    show_cards(dealer)
+    show_scores(player, dealer)
     if someone_busted?
       busted_results
     elsif tie?
       show_tie
     else
-      show_winner(highest_scorer)
+      show_winner(player_with_closest_total)
     end
   end
 end
