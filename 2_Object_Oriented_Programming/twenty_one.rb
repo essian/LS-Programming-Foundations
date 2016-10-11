@@ -169,7 +169,7 @@ class Dealer < Participant
     press_a_key
     show_dealer_turn_cards(self)
     loop do
-      break if total > 17
+      break if total >= 17
       show_dealing
       hit(deck)
       show_dealer_turn_cards(self)
