@@ -5,7 +5,13 @@ class CircularBuffer
   attr_reader :size, :buffer, :read_cycle, :write_cycle
   def initialize(size)
     @size = size
-    clear
+    setup
+  end
+
+  def setup
+    @buffer = (1..size).map { [] }
+    @write_cycle = buffer.cycle
+    @read_cycle = buffer.cycle
   end
 
   def read
@@ -21,7 +27,7 @@ class CircularBuffer
 
   def write!(str)
     return if str.nil?
-    if buffer.any?(&:empty?)
+    if buffer_not_full?
       write(str)
     else
       read_cycle.next
@@ -29,11 +35,7 @@ class CircularBuffer
     end
   end
 
-  def clear
-    @buffer = (1..size).map { [] }
-    @write_cycle = buffer.cycle
-    @read_cycle = buffer.cycle
-  end
+  alias clear setup
 
   private
 
@@ -43,5 +45,9 @@ class CircularBuffer
 
   def buffer_empty?
     buffer.all?(&:empty?)
+  end
+
+  def buffer_not_full?
+    buffer.any?(&:empty?)
   end
 end
