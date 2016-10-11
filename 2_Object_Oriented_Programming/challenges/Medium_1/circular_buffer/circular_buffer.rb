@@ -3,7 +3,7 @@ class BufferFullException < StandardError; end
 
 class CircularBuffer
   attr_reader :size, :buffer, :read_cycle, :write_cycle
-  def initialize(size)
+  def initialize(size=1)
     @size = size
     setup
   end
@@ -38,6 +38,8 @@ class CircularBuffer
   alias clear setup
 
   private
+
+  attr_reader :read_cycle, :write_cycle
 
   def buffer_full?
     buffer.none?(&:empty?)
