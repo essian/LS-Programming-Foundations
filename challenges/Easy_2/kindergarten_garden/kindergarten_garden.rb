@@ -1,3 +1,4 @@
+# models a classroom garden
 class Garden
   PLANTS = { 'C' => :clover, 'R' => :radishes,
              'G' => :grass, 'V' => :violets }.freeze

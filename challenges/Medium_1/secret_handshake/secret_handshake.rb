@@ -1,8 +1,9 @@
+# implements a secret handshake
 class SecretHandshake
-  ACTION_CODES = { 1 => "wink",
-                   10 => "double blink",
-                   100 => "close your eyes",
-                   1000 => "jump" }.freeze
+  ACTION_CODES = { 1 => 'wink',
+                   10 => 'double blink',
+                   100 => 'close your eyes',
+                   1000 => 'jump' }.freeze
 
   REVERSE_CODE = ACTION_CODES.keys.max * 10
 
@@ -27,8 +28,8 @@ class SecretHandshake
   end
 end
 
-handshake = SecretHandshake.new 9
-p handshake.commands # => ["wink","jump"]
+# handshake = SecretHandshake.new 9
+# p handshake.commands # => ["wink","jump"]
 
-handshake = SecretHandshake.new "110011"
-p handshake.commands # => ["jump","wink"]
+# handshake = SecretHandshake.new "110011"
+# p handshake.commands # => ["jump","wink"]

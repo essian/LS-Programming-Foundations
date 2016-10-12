@@ -7,8 +7,8 @@ class Phrase
     count = Hash.new(0)
     @words.each do |word|
       count[word] += 1
-      end
-      count
+    end
+    count
   end
 end
 phrase = Phrase.new('word hello jane hello')

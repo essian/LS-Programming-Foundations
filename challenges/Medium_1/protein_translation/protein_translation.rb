@@ -1,14 +1,14 @@
 class InvalidCodonError < StandardError; end
-
+# translates condon string to proteins
 class Translation
-  CODONS = { ['AUG'] => 'Methionine',
-             ['UUU', 'UUC'] => 'Phenylalanine',
-             ['UUA', 'UUG'] => 'Leucine',
-             ['UCU', 'UCC', 'UCA', 'UCG'] => 'Serine',
-             ['UAU', 'UAC'] => 'Tyrosine',
-             ['UGU', 'UGC'] => 'Cysteine',
-             ['UGG'] => 'Tryptophan',
-             ['UAA', 'UAG', 'UGA'] => 'STOP' }.freeze
+  CODONS = { %w(AUG) => 'Methionine',
+             %w(UUU UUC) => 'Phenylalanine',
+             %w(UUA UUG) => 'Leucine',
+             %w(UCU UCC UCA UCG) => 'Serine',
+             %w(UAU UAC) => 'Tyrosine',
+             %w(UGU UGC) => 'Cysteine',
+             %w(UGG) => 'Tryptophan',
+             %w(UAA UAG UGA) => 'STOP' }.freeze
 
   def self.of_codon(codon_string)
     CODONS.select { |key, _| key.include?(codon_string) }.values.first

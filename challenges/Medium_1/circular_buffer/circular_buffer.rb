@@ -1,9 +1,10 @@
 class BufferEmptyException < StandardError; end
 class BufferFullException < StandardError; end
 
+# implements a circular buffer
 class CircularBuffer
   attr_reader :size, :buffer, :read_cycle, :write_cycle
-  def initialize(size=1)
+  def initialize(size = 1)
     @size = size
     setup
   end
