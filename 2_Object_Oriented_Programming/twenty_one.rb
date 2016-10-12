@@ -23,17 +23,17 @@ module Display
 
   def show_cards(participant)
     puts "#{participant.name}'s hand is:"
-    participant.hand.each { |card| output(card) }
+    participant.hand.each { |card| show_card(card) }
     puts
   end
 
-  def output(card)
+  def show_card(card)
     puts "#{card.first} of #{card.last}"
   end
 
   def show_one_card(participant)
     puts "#{participant.name}'s first card is: "
-    output(participant.hand.first)
+    show_card(participant.hand.first)
     puts
   end
 
@@ -143,9 +143,10 @@ class Player < Participant
       break if response.start_with? 's'
       hit(deck)
       show_player_turn_cards(self, dealer)
-      next unless busted?
-      show_busted(name)
-      break
+      if busted?
+        show_busted(name)
+        break
+      end
     end
   end
 
@@ -166,8 +167,7 @@ class Dealer < Participant
   def play(deck)
     press_a_key
     show_dealer_turn_cards(self)
-    loop do
-      break if total >= 17
+    until total >= 17
       show_dealing
       hit(deck)
       show_dealer_turn_cards(self)

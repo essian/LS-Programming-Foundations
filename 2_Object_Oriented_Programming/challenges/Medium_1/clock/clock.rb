@@ -3,10 +3,13 @@ class Clock
   def initialize(hour, min)
     @hour = hour
     @min = min
-
-    extra_hour, @min = @min.divmod 60
-    @hour += extra_hour
-    @hour = @hour % 24
+    while @min > 60
+      @hour += 1
+      @min -= 60
+    end
+    while @hour >= 24
+      @hour -= 24
+    end
     while @min < 0
       @hour -= 1
       @min += 60
